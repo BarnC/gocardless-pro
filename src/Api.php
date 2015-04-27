@@ -9,6 +9,7 @@ use GoCardless\Pro\Models\Customer;
 use GoCardless\Pro\Models\CustomerBankAccount;
 use GoCardless\Pro\Models\Mandate;
 use GoCardless\Pro\Models\Payment;
+use GoCardless\Pro\Models\Subscription;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
 
@@ -20,6 +21,7 @@ class Api
     const CUSTOMER_BANK_ACCOUNTS = 'customer_bank_accounts';
     const MANDATES = 'mandates';
     const PAYMENTS = 'payments';
+    const SUBSCRIPTIONS = 'subscriptions';
 
     /**
      * @var Client
@@ -356,6 +358,15 @@ class Api
         return Payment::fromArray($response);
     }
 
+
+    public function createSubscription(Subscription $subscription)
+    {
+        $response = $this->post(self::SUBSCRIPTIONS, $subscription->toArray());
+
+        return Subscription::fromArray($response);
+    }
+
+
     /**
      * @param $endpoint
      * @param array $params
@@ -418,8 +429,8 @@ class Api
         } catch (BadResponseException $ex) {
             $this->handleBadResponseException($ex);
         }
-
         return $response[$endpoint];
+
     }
 
     /**
