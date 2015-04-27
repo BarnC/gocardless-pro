@@ -24,6 +24,10 @@ class Payment
     private $reference;
     /** @var string */
     private $amount_refunded;
+    /** @var string */
+    private $metadata;
+
+
 
     /** @var Mandate */
     private $mandate;
@@ -253,4 +257,21 @@ class Payment
 
         return $payment;
     }
+
+    /**
+     * @return string
+     */
+    public function getMetadata()
+    {
+        return $this->metadata;
+    }
+
+    /**
+     * @param string $metadata
+     */
+    public function setMetadata($metadata)
+    {
+        $this->metadata = $metadata;
+    }
+
 }
