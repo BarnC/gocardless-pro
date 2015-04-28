@@ -366,6 +366,12 @@ class Api
         return Subscription::fromArray($response);
     }
 
+    public function getSubscription($id)
+    {
+        $response = $this->get(self::SUBSCRIPTIONS, [], $id);
+
+        return Subscription::fromArray($response);
+    }
 
     /**
      * @param $endpoint
