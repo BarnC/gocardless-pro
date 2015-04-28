@@ -27,6 +27,9 @@ class Payment
     /** @var string */
     private $metadata;
 
+    /** @var Array */
+    private $links;
+
 
 
     /** @var Mandate */
