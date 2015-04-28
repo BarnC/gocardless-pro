@@ -272,6 +272,7 @@ class Payment
     public function setMetadata($metadata)
     {
         $this->metadata = $metadata;
+	return $this;
     }
 
 }
