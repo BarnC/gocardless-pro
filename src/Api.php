@@ -22,6 +22,7 @@ class Api
     const MANDATES = 'mandates';
     const PAYMENTS = 'payments';
     const SUBSCRIPTIONS = 'subscriptions';
+    const HELPERS = 'helpers';
 
     /**
      * @var Client
@@ -44,6 +45,12 @@ class Api
     private $version;
 
     /**
+     * @var Array
+     */
+    private $headers;
+
+
+    /**
      * @var string
      */
     private $environment;
@@ -55,6 +62,11 @@ class Api
         $this->password = $password;
         $this->version = $version;
         $this->environment = $environment === 'production' ? 'production' : 'staging';
+
+        $this->headers = [
+            'GoCardless-Version' => $this->version,
+            'Content-Type' => 'application/json'
+        ];
     }
 
     /**
@@ -285,8 +297,14 @@ class Api
      * @param $id
      * @return Mandate
      */
-    public function getMandate($id)
+    public function getMandate($id, $pdf = false)
     {
+
+        if ($pdf) {
+            $this->setHeaders(array_merge($this->getHeaders(), ['Accept' => 'application/pdf']));
+            return $this->get(self::MANDATES, [], $id, false);
+        }
+
         $response = $this->get(self::MANDATES, [], $id);
 
         return Mandate::fromArray($response);
@@ -299,7 +317,6 @@ class Api
     public function disableMandate($id)
     {
         $response = $this->post(self::MANDATES, [], $id . '/actions/cancel');
-
         return Mandate::fromArray($response);
     }
 
@@ -323,6 +340,17 @@ class Api
         $response = $this->post(self::PAYMENTS, $payment->toArray());
 
         return Payment::fromArray($response);
+    }
+
+    /**
+     * @param Payment $payment
+     * @return Payment
+     */
+    public function listPayments($parameters)
+    {
+        $response = $this->get(self::PAYMENTS, $parameters);
+
+        return $this->buildCollection(new Payment, $response);
     }
 
     /**
@@ -379,14 +407,19 @@ class Api
      * @param null $path
      * @return array
      */
-    private function get($endpoint, $params = [], $path = null)
+    private function get($endpoint, $params = [], $path = null, $json = true)
     {
         try {
             $response = $this->client->get($this->url($endpoint, $path), [
-                'headers' => $this->headers(),
+                'headers' => $this->getHeaders(),
                 'query' => $params,
                 'auth' => [$this->username, $this->password]
-            ])->json();
+            ]);
+            if ($json) {
+                $response = $response->json();
+            } else {
+                return $response;
+            }
         } catch (BadResponseException $ex) {
             $this->handleBadResponseException($ex);
         }
@@ -428,7 +461,7 @@ class Api
     {
         try {
             $response = $this->client->$method($this->url($endpoint, $path), [
-                'headers' => $this->headers(),
+                'headers' => $this->getHeaders(),
                 'json' => [$endpoint => $data],
                 'auth' => [$this->username, $this->password]
             ])->json();
@@ -462,12 +495,15 @@ class Api
     /**
      * @return array
      */
-    private function headers()
+    private function getHeaders()
     {
-        return [
-            'GoCardless-Version' => $this->version,
-            'Content-Type' => 'application/json'
-        ];
+        return $this->headers;
+    }
+
+    private function setHeaders($headers)
+    {
+        $this->headers = $headers;
+        return $this;
     }
 
     /**
