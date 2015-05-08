@@ -322,7 +322,9 @@ class Subscription extends Entity
     public function toArray()
     {
         $subscription = array_filter(get_object_vars($this));
-        $subscription['links']['mandate'] = $this->mandate->getId();
+        if ($this->mandate) {
+            $subscription['links']['mandate'] = $this->mandate->getId();
+        }
         unset($subscription['mandate']);
         return $subscription;
     }
