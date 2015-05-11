@@ -1,8 +1,9 @@
 <?php namespace GoCardless\Pro\Models;
 
+use GoCardless\Pro\Models\Abstracts\Entity;
 use GoCardless\Pro\Models\Traits\Factory;
 
-class Payment
+class Payment extends Entity
 {
     use Factory;
 
