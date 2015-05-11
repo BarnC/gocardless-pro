@@ -8,9 +8,9 @@ class Payment extends Entity
     use Factory;
 
     /** @var string */
-    private $id;
+    protected $id;
     /** @var string */
-    private $created_at;
+    protected $created_at;
     /** @var string */
     private $charge_date;
     /** @var string */
