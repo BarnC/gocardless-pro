@@ -278,4 +278,8 @@ class Payment
 	return $this;
     }
 
+    public function getLinks()
+    {
+        return $this->links;
+    }
 }
