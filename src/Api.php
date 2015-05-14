@@ -396,6 +396,13 @@ class Api
         return Subscription::fromArray($response);
     }
 
+    public function cancelSubscription($id)
+    {
+        $response = $this->post(self::SUBSCRIPTIONS, [], $id . '/actions/cancel');
+
+        return Subscription::fromArray($response);
+    }
+
     /**
      * @param $endpoint
      * @param array $params
@@ -560,7 +567,7 @@ class Api
      * @param array $response
      * @throws ResourceNotFoundException
      */
-    private function handleInvalidApiUsage(BadResponseException $ex, $response)
+    private function handleInvalidApiUsage(BadResponseException $ebx, $response)
     {
         switch ($response['error']['errors'][0]['reason']) {
             case 'resource_not_found' :
