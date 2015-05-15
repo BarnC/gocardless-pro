@@ -567,7 +567,7 @@ class Api
      * @param array $response
      * @throws ResourceNotFoundException
      */
-    private function handleInvalidApiUsage(BadResponseException $ebx, $response)
+    private function handleInvalidApiUsage(BadResponseException $ex, $response)
     {
         switch ($response['error']['errors'][0]['reason']) {
             case 'resource_not_found' :
