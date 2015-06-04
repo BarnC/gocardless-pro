@@ -250,6 +250,21 @@ class Api
         return CustomerBankAccount::fromArray($response);
     }
 
+
+    /**
+     * @param int $limit
+     * @return array
+     */
+    public function listBankAccountsForCustomer($id, $limit = 25)
+    {
+        $response = $this->get(self::CUSTOMER_BANK_ACCOUNTS, [
+            'customer' => $id,
+            'limit' => intval($limit)
+        ]);
+
+        return $this->buildCollection(new CustomerBankAccount, $response);
+    }
+
     /**
      * @param Mandate $mandate
      *
@@ -283,6 +298,22 @@ class Api
         $response = $this->get(self::MANDATES, [
             'customer' => $id,
             'limit' => $limit,
+        ]);
+
+        return $this->buildCollection(new Mandate, $response);
+    }
+
+    /**
+     * @param $id
+     * @param int $limit
+     * @return array
+     */
+    public function listMandatesForCustomerBankAccount($id, $status = null, $limit = 25)
+    {
+        $response = $this->get(self::MANDATES, [
+            'customer_bank_account' => $id,
+            'limit' => $limit,
+            'status' => $status
         ]);
 
         return $this->buildCollection(new Mandate, $response);
