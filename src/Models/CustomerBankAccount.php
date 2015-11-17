@@ -38,6 +38,7 @@ class CustomerBankAccount extends BankAccount
         return $this;
     }
 
+
     public function toArray()
     {
         $account = array_filter(get_object_vars($this));

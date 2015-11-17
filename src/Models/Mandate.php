@@ -32,6 +32,9 @@ class Mandate extends Entity
      */
     protected $scheme;
 
+    /** @var Array */
+    private $links;
+
     /**
      * @var string
      */
@@ -191,6 +194,11 @@ class Mandate extends Entity
     public function getNextPossibleChargeDate()
     {
         return $this->next_possible_charge_date;
+    }
+
+    public function getLinks()
+    {
+        return $this->links;
     }
 
     /**

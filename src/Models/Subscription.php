@@ -78,6 +78,9 @@ class Subscription extends Entity
      */
     protected $upcoming_payments;
 
+    /** @var Array */
+    private $links;
+
 
     public function __construct(Mandate $mandate = null)
     {
@@ -327,5 +330,10 @@ class Subscription extends Entity
         }
         unset($subscription['mandate']);
         return $subscription;
+    }
+
+    public function getLinks()
+    {
+        return $this->links;
     }
 }
