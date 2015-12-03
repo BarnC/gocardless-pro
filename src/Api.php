@@ -9,6 +9,7 @@ use GoCardless\Pro\Models\Customer;
 use GoCardless\Pro\Models\CustomerBankAccount;
 use GoCardless\Pro\Models\Mandate;
 use GoCardless\Pro\Models\Payment;
+use GoCardless\Pro\Models\Refund;
 use GoCardless\Pro\Models\Subscription;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
@@ -23,6 +24,7 @@ class Api
     const PAYMENTS = 'payments';
     const SUBSCRIPTIONS = 'subscriptions';
     const HELPERS = 'helpers';
+    const REFUNDS = 'refunds';
 
     /**
      * @var Client
@@ -412,11 +414,20 @@ class Api
         return Payment::fromArray($response);
     }
 
+    /**
+     * @param $id
+     * @return Refund
+     */
+    public function createRefund(Refund $refund)
+    {
+        $response = $this->post(self::REFUNDS, $refund->toArray());
+        return Refund::fromArray($response);
+    }
+
 
     public function createSubscription(Subscription $subscription)
     {
         $response = $this->post(self::SUBSCRIPTIONS, $subscription->toArray());
-
         return Subscription::fromArray($response);
     }
 
@@ -510,7 +521,7 @@ class Api
      */
     private function url($endpoint, $path = null)
     {
-        return $this->baseUrl() . $endpoint . ($path ? '/' . $path : '');
+        return $this->baseUrl() . $endpoint . ($path ? ('/' . $path) : '');
     }
 
     /**
@@ -587,8 +598,9 @@ class Api
      */
     private function handleValidationFailedErrors($response)
     {
+        $message = (isset($response['error']['errors'][0]['message'])) ? $response['error']['errors'][0]['message'] : $response['error']['message'];
         throw new ValidationException(
-            $response['error']['message'],
+            $message,
             $response['error']['errors']
         );
     }
@@ -600,12 +612,16 @@ class Api
      */
     private function handleInvalidApiUsage(BadResponseException $ex, $response)
     {
-        switch ($response['error']['errors'][0]['reason']) {
-            case 'resource_not_found' :
-                throw new ResourceNotFoundException(
-                    sprintf('Resource not found at %s', $ex->getRequest()->getResource()),
-                    $ex->getCode()
-                );
+        if (isset($response['error']['errors'][0]['reason'])) {
+            switch ($response['error']['errors'][0]['reason']) {
+                case 'resource_not_found' :
+                    throw new ResourceNotFoundException(
+                        sprintf('Resource not found at %s', $ex->getRequest()->getResource()),
+                        $ex->getCode()
+                    );
+            }
+        } else {
+            throw $ex;
         }
     }
 }
