@@ -25,6 +25,7 @@ class Api
     const SUBSCRIPTIONS = 'subscriptions';
     const HELPERS = 'helpers';
     const REFUNDS = 'refunds';
+    const MANDATE_PDFS = 'mandate_pdfs';
 
     /**
      * @var Client
@@ -327,15 +328,24 @@ class Api
      */
     public function getMandate($id, $pdf = false)
     {
-
         if ($pdf) {
-            $this->setHeaders(array_merge($this->getHeaders(), ['Accept' => 'application/pdf']));
-            return $this->get(self::MANDATES, [], $id, false);
+            return $this->getMandatePDF($id);
         }
 
         $response = $this->get(self::MANDATES, [], $id);
 
         return Mandate::fromArray($response);
+    }
+
+    public function getMandatePDF($id)
+    {
+        $pdf = $this->post(self::MANDATE_PDFS, [
+            'links' => [
+                'mandate' => $id
+            ]
+        ]);
+
+        return (Array)$pdf;
     }
 
     /**
@@ -434,6 +444,18 @@ class Api
     public function getSubscription($id)
     {
         $response = $this->get(self::SUBSCRIPTIONS, [], $id);
+
+        return Subscription::fromArray($response);
+    }
+
+
+    /**
+     * @param Subscription $subscription
+     * @return Subscription
+     */
+    public function updateSubscription(Subscription $subscription)
+    {
+        $response = $this->put(self::SUBSCRIPTIONS, $subscription->toArrayForUpdating(), $subscription->getId());
 
         return Subscription::fromArray($response);
     }
@@ -612,6 +634,7 @@ class Api
      */
     private function handleInvalidApiUsage(BadResponseException $ex, $response)
     {
+
         if (isset($response['error']['errors'][0]['reason'])) {
             switch ($response['error']['errors'][0]['reason']) {
                 case 'resource_not_found' :

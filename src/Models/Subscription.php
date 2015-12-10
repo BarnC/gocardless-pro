@@ -35,7 +35,7 @@ class Subscription extends Entity
     /**
      * @var string
      */
-    protected $end_at;
+    protected $end_date;
 
     /**
      * @var string
@@ -71,7 +71,7 @@ class Subscription extends Entity
     /**
      * @var string
      */
-    protected $start_at;
+    protected $start_date;
 
     /**
      * @var array
@@ -163,17 +163,17 @@ class Subscription extends Entity
     /**
      * @return string
      */
-    public function getEndAt()
+    public function getEndDate()
     {
-        return $this->end_at;
+        return $this->end_date;
     }
 
     /**
      * @param string $end_at
      */
-    public function setEndAt($end_at)
+    public function setEndDate($end_date)
     {
-        $this->end_at = $end_at;
+        $this->end_date = $end_date;
 
         return $this;
     }
@@ -289,17 +289,17 @@ class Subscription extends Entity
     /**
      * @return string
      */
-    public function getStartAt()
+    public function getStartDate()
     {
-        return $this->start_at;
+        return $this->start_date;
     }
 
     /**
      * @param string $start_at
      */
-    public function setStartAt($start_at)
+    public function setStartDate($start_date)
     {
-        $this->start_at = $start_at;
+        $this->start_date = $start_date;
 
         return $this;
     }
@@ -335,5 +335,13 @@ class Subscription extends Entity
     public function getLinks()
     {
         return $this->links;
+    }
+
+    /**
+     * @return array
+     */
+    public function toArrayForUpdating()
+    {
+        return array_intersect_key($this->toArray(), array_flip(['name', 'metadata', 'payment_reference']));
     }
 }
