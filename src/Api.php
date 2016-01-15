@@ -485,11 +485,11 @@ class Api
             } else {
                 return $response;
             }
+            return $response[$endpoint];
         } catch (BadResponseException $ex) {
             $this->handleBadResponseException($ex);
         }
 
-        return $response[$endpoint];
     }
 
     /**

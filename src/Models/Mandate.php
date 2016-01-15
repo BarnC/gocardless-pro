@@ -58,6 +58,11 @@ class Mandate extends Entity
         return $this;
     }
 
+    public function getCustomerBankAccount()
+    {
+        return $this->customer_bank_account;
+    }
+
     /**
      * @param Creditor $creditor
      * @return $this
