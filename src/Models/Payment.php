@@ -66,6 +66,11 @@ class Payment extends Entity
         return $this;
     }
 
+    public function getMandate()
+    {
+        return $this->mandate;
+    }
+
     /**
      * @param $date
      * @return Payment
